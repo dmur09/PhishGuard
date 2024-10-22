@@ -7,5 +7,5 @@ URL Safety Check: The application uses VirusTotal to check the URL’s reputatio
 Behavior Analysis: Using Selenium in headless mode, the application analyzes the behavior of the URL (e.g., redirects) in a controlled environment.
 
 ### Security
-API Key Handling: The VirusTotal API key is stored in a separate config.py file, which is not included in the repository for security reasons. Ensure this file is excluded by adding it to .gitignore.
+API Key Handling: The VirusTotal API key is stored in a separate config.py file, which is not included in the repository for security reasons.
 Headless Browser: The application uses Selenium in headless mode to safely analyze URLs in an isolated environment.
