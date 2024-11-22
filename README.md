@@ -9,3 +9,7 @@ Behavior Analysis: Using Selenium in headless mode, the application analyzes the
 ### Security
 API Key Handling: The VirusTotal API key is stored in a separate config.py file, which is not included in the repository for security reasons.
 Headless Browser: The application uses Selenium in headless mode to safely analyze URLs in an isolated environment.
+
+### Future Work
+- Real-time / Daily CVE Reporting, detailed views for CVE overview
+- Phishing detection with machine learning, the user will input/copy a message, and a phishing confidence rate will be displayed
