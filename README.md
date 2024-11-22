@@ -13,3 +13,5 @@ Headless Browser: The application uses Selenium in headless mode to safely analy
 ### Future Work
 - Real-time / Daily CVE Reporting, detailed views for CVE overview
 - Phishing detection with machine learning, the user will input/copy a message, and a phishing confidence rate will be displayed
+
+Developed by Ewan Shen and Diego Murillo.
