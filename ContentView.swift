@@ -1,106 +1,116 @@
-//
-//  ContentView.swift
-//  QRScanner
-//
-//  Created by Diego Murillo on 10/22/24.
-//
-
+// Diego wrote the code for this file
+// This content view handles scene changing and the main menu, along with button to change scenes to the other individual views
+// Cursor helped come up with the idea of of having scenes and values for each, and saving a current/previous scene to reference and switch between for all views
 import SwiftUI
-import Foundation
+
+// An enum that acts a scene value holder, to reference for when a scene change is required
+enum Screen {
+    case home // home/main menu scene
+    case qrScanner // QR scanner scene
+    case phishingTextDetector // phishing text detector scene
+    case PhishingNews // phishing news scene
+    case phishingEducation // phishing education scene
+    case scanning // QR camera scanning scene
+}
+
 
 struct ContentView: View {
-    @State private var showScanner = false  // Control whether to show the scanner or home screen
-    @State private var scannedCode: String?
-    @State private var isScanning = true
-
+    @State private var currentScreen: Screen = .home // keeps track of the current scene
+    @State private var previousScreen: Screen = .home // keeps track of the previous
+    
     var body: some View {
-        if showScanner {
-            VStack {
-                if let code = scannedCode {
-                    Text("Reputation Check: \(code)")  // Display the result of URL reputation check here
-                    Button("Scan Again") {
-                        self.scannedCode = nil
-                        self.isScanning = true
-                    }
-                } else {
-                    if isScanning {
-                        QRScannerViewController { scannedCode in
-                            self.scannedCode = scannedCode
-                            self.isScanning = false
-                            
-                            // Call your URL reputation check here
-                            checkUrlReputation(scannedCode) { reputationResult in
-                                // Handle the result here, e.g., updating the UI
-                                self.scannedCode = reputationResult  // Update with the reputation result
-                            }
-                        }
-                        .edgesIgnoringSafeArea(.all)
-                    } else {
-                        Button("Scan Again") {
-                            self.scannedCode = nil
-                            self.isScanning = true
-                        }
-                    }
-                }
-            }
-        } else {
-            VStack {
-                Text("Welcome!")
-                    .font(.largeTitle)
-                    .padding()
-                
-                Text("Press this button to begin scanning a QR code")
-                    .padding()
-                
-                Button("Begin Scanning") {
-                    showScanner = true  // Transition to the scanner
-                }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+        ZStack {
+            // changes the color of the app to black
+            Color.black.edgesIgnoringSafeArea(.all)
+            
+            // a switch case that checks the enum value of the current scene, then references the correct scene file
+            switch currentScreen {
+            case .home:
+                homeMenu
+            case .qrScanner:
+                QRScannerView(currentScreen: $currentScreen, previousScreen: $previousScreen) // for QR code scanner
+            case .scanning:
+                QRScannerScene(currentScreen: $currentScreen, previousScreen: $previousScreen) // for camera scene once scanning starts
+            case .phishingTextDetector:
+                PhishingTextDetectorView(currentScreen: $currentScreen, previousScreen: $previousScreen) // phishing text detector
+            case .PhishingNews:
+                PhishingNewsView(currentScreen: $currentScreen, previousScreen: $previousScreen) // phishing news scene
+            case .phishingEducation:
+                PhishingEducationView(currentScreen: $currentScreen, previousScreen: $previousScreen) // phishing education scene
             }
         }
     }
-
-    func checkUrlReputation(_ url: String, completion: @escaping (String) -> Void) {
-        let apiKey = ""  // Replace with your actual API key
-        let apiUrl = "https://www.virustotal.com/vtapi/v2/url/report"
-        let urlComponents = URLComponents(string: apiUrl)
-        
-        var request = URLRequest(url: (urlComponents?.url)!)
-        request.httpMethod = "POST"
-        
-        let parameters: [String: String] = [
-            "apikey": apiKey,
-            "resource": url
-        ]
-        
-        request.httpBody = parameters
-            .map { "\($0.key)=\($0.value)" }
-            .joined(separator: "&")
-            .data(using: .utf8)
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                completion("Error: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-            
-            do {
-                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                   let positives = json["positives"] as? Int,
-                   let total = json["total"] as? Int {
-                    let resultMessage = "Total Scans: \(total)\nFlagged as Malicious by \(positives) engines."
-                    completion(resultMessage)
-                } else {
-                    completion("Invalid response from VirusTotal")
+    
+    // the home menu set up, with text and image inside a vstack
+    var homeMenu: some View {
+        ScrollView {
+            VStack(spacing: 30) {
+                Text("PhishGuard")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .padding(.top, 40)
+                Image("MyImage") // logo image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                Text("The ultimate app for your digital protection")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                
+                Spacer()
+                
+                // Buttons that lead to each scene, listed one after another
+                VStack(spacing: 20) {
+                    // QR code scanner button, with correct scene var updating
+                    FeatureButton(title: "QR Code Scanner", iconName: "qrcode.viewfinder") {
+                        previousScreen = .home
+                        currentScreen = .qrScanner
+                    }
+                    // Phishing text detector button
+                    FeatureButton(title: "Phishing Text Detector", iconName: "exclamationmark.shield") {
+                        previousScreen = .home
+                        currentScreen = .phishingTextDetector
+                    }
+                    // dailty phishing news button
+                    FeatureButton(title: "Daily Phishing News", iconName: "newspaper") {
+                        previousScreen = .home
+                        currentScreen = .PhishingNews
+                    }
+                    // phishing education button
+                    FeatureButton(title: "Phishing Education", iconName: "graduationcap") {
+                        previousScreen = .home
+                        currentScreen = .phishingEducation
+                    }
                 }
-            } catch {
-                completion("Failed to parse response: \(error.localizedDescription)")
+                
+                Spacer()
             }
+            .padding()
         }
-        
-        task.resume()
+    }
+}
+
+// custom button used to natvigate the scenes in app
+struct FeatureButton: View {
+    var title: String
+    var iconName: String
+    var action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Image(systemName: iconName) // icon image next to text
+                Text(title)
+                    .font(.title2)
+                    .bold()
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .padding(.horizontal)
+        }
     }
 }
