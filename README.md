@@ -21,6 +21,3 @@ Offers users a checklist when reviewing emails or messages.
 ### Security
 API Key Handling: The VirusTotal API key should be stored in a separate config.py file, which is not included in the repository for security reasons.
 Headless Browser: The application uses Selenium in headless mode to safely analyze URLs in an isolated environment.
-
-### Contributions
-
