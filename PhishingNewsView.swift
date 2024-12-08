@@ -10,6 +10,27 @@
 // References: Additioanlly, Chat-GPT helped me with the fetchNews functiona and taught me how to create a URL session to fetch news articles from News API.
 import SwiftUI
 
+// the following are defined outside the view as the API news article models are independent from the UI of the app
+// model for API Response
+struct NewsAPIResponse: Decodable {
+    let articles: [APIArticle] // the array of articles in the API response.
+}
+
+// model for an API article, raw structure of each article as returned by the API, maps to JSON keys in the API response, decodeable and not ready for Swift (cannot be stored in a list)
+struct APIArticle: Decodable {
+    let title: String
+    let description: String?
+    let url: String
+}
+
+// News Article Model, processed version of an article, ready for use in the app's UI, identifiable and ready for Swift (can be stored in a list)
+struct NewsArticle: Identifiable {
+    let id: UUID
+    let title: String
+    let description: String
+    let url: String
+}
+
 struct PhishingNewsView: View {
     @State private var newsArticles: [NewsArticle] = [] // store news articles in an array data structure, each index stores ID, title, description, and URL
     @State private var isLoading = true
@@ -110,25 +131,4 @@ struct PhishingNewsView: View {
             }
         }.resume()
     }
-}
-
-// the following are defined outside the view as the API news article models are independent from the UI of the app
-// model for API Response
-struct NewsAPIResponse: Decodable {
-    let articles: [APIArticle] // the array of articles in the API response.
-}
-
-// model for an API article, raw structure of each article as returned by the API, maps to JSON keys in the API response, decodeable and not ready for Swift (cannot be stored in a list)
-struct APIArticle: Decodable {
-    let title: String
-    let description: String?
-    let url: String
-}
-
-// News Article Model, processed version of an article, ready for use in the app's UI, identifiable and ready for Swift (can be stored in a list)
-struct NewsArticle: Identifiable {
-    let id: UUID
-    let title: String
-    let description: String
-    let url: String
 }
