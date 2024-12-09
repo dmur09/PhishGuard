@@ -18,6 +18,13 @@ Keeps users updated on the latest phishing threats.
 Offers users detailed information about phishing and tips for awareness.
 Offers users a checklist when reviewing emails or messages.
 
-### Security
-API Key Handling: The VirusTotal API key should be stored in a separate config.py file, which is not included in the repository for security reasons.
-Headless Browser: The application uses Selenium in headless mode to safely analyze URLs in an isolated environment.
+### Contributions
+Ewan Shen implemented the Phishing News Tool and Phishing Education tool and created the dataset for our version of the phishing text detector with machine learning.
+Diego Murillo implemented the main menu, the QR code view, and the scanner view, incorporating the VirusTotal API in the analysis of decoded URLs.
+Both team members also contributed to each other's sections through help with coding and debugging.
+
+### References
+- Cukmekerb's Coding Class (https://www.youtube.com/watch?v=yY0ciWj8oco) for teaching us about News API
+- VirusTotal and News API for API functionality
+- Cursor and Chat-GPT for helping us learn to implement and use the APIs of VirusTotal and NewsAPI
+- Dr. Cibrian's slides and code on implementing machine learning into Swift
