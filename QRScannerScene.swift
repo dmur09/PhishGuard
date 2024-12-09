@@ -66,7 +66,7 @@ struct QRScannerScene: View {
                         }
                         .edgesIgnoringSafeArea(.all)
                     }
-            // back butoon located at the top of the screen to avoid cluttering the camera scene
+            // back button located at the top of the screen to avoid cluttering the camera scene
             VStack {
                 HStack {
                     Button(action: {

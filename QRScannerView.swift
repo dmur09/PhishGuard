@@ -10,62 +10,73 @@ struct QRScannerView: View {
     @Binding var previousScreen: Screen // keeps track of the previous
 
     var body: some View {
-        VStack(spacing: 20) {
-            Spacer()
+        ZStack {
+            // Back button overlay
+            VStack(alignment: .leading, spacing: 20) {
+                HStack {
+                    // Back Button
+                    Button(action: {
+                        currentScreen = .home // navigation
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.left") // button in UI to return to PhishGuard's main menu
+                            Text("Back")
+                        }
+                        .padding()
+                        .foregroundColor(.blue)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading) // Align to the left
+                }
+                .padding()
+                Spacer()
+            }
+            .zIndex(1)
             
-            // title and explanation
-            Text("QR Code Scanner")
-                .font(.largeTitle)
-                .bold()
-                .padding(.bottom, 10)
-            
-            Text("""
-                Use the QR Code Scanner to scan URLs or other information encoded in QR codes. 
-                Once scanned, results will display as follows:
-                - Green: Safe URL
-                - Yellow: Potentially risky
-                - Red: Malicious or harmful
-                """)
-            .multilineTextAlignment(.center)
+            VStack(spacing: 20) {
+                Spacer()
+                    .frame(height: 60)  // Add spacing for back button
+                    
+                Text("QR Code Scanner")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.bottom, 10)
+                
+                Text("""
+                    Use the QR Code Scanner to scan URLs or other information encoded in QR codes. 
+                    Once scanned, results will display as follows:
+                    - Green: Safe URL
+                    - Yellow: Potentially risky
+                    - Red: Malicious or harmful
+                    """)
+                .multilineTextAlignment(.center)
+                .padding()
+                .foregroundColor(.gray)
+                
+                Spacer()
+                
+                // Start Scanning button
+                Button(action: {
+                        previousScreen = .qrScanner  // Set the previousScreen to QRScannerView
+                        currentScreen = .scanning // transitions to camera scene for scanning
+                    }) {
+                    HStack {
+                        Image(systemName: "qrcode.viewfinder")
+                            .font(.title)
+                        Text("Start Scanning")
+                            .font(.title3)
+                            .bold()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(.white)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                }
+                
+                Spacer()
+            }
             .padding()
-            .foregroundColor(.gray)
-            
-            Spacer()
-            
-            // Start Scanning button
-            Button(action: {
-                    previousScreen = .qrScanner  // Set the previousScreen to QRScannerView
-                    currentScreen = .scanning // transitions to camera scene for scanning
-                }) {
-                HStack {
-                    Image(systemName: "qrcode.viewfinder")
-                        .font(.title)
-                    Text("Start Scanning")
-                        .font(.title3)
-                        .bold()
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .foregroundColor(.white)
-                .background(Color.blue)
-                .cornerRadius(10)
-                .padding(.horizontal)
-            }
-            
-            Spacer()
-            
-            // Back Button
-            Button(action: {
-                currentScreen = .home  // In the QR code scanner view, the back button directs to the main menu
-            }) {
-                HStack {
-                    Image(systemName: "arrow.left")
-                    Text("Back")
-                }
-                .padding()
-                .foregroundColor(.blue)
-            }
         }
-        .padding()
     }
 }

@@ -12,72 +12,81 @@ struct PhishingTextDetectorView: View {
     @Binding var previousScreen: Screen
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Text("Phishing Text Detector") // title of the tool
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.top)
-                
-                Text("""
-                    Use the Phishing Text Detector to check suspicious text for phishing attempts. 
-                    Enter or paste the text, and the app will analyze it for potential risks.
-                    """) // decription of the tool
-                .padding()
-                .foregroundColor(.gray)
-                
+        ZStack {
+            // Back button overlay
+            VStack {
                 Spacer()
-                
-                // Prediction Result
-                Text(self.phishingIdentifier.prediction == "spam" ? "PHISHING DETECTED" : "No Phishing Detected") // Phishing vs no phishing detection to be read by the user
-                    .font(.system(size: 30))
-                    .fontWeight(.bold)
-                    .padding()
-                    .multilineTextAlignment(.center)
-                
-                // Confidence Level
-                Text("Confidence: \(String(format: "%.2f", self.phishingIdentifier.confidence * 100))%") // converted Dr. Cibrian's initial decimal code to percentage for user readability
-                    .font(.title2)
-                    .foregroundColor(.gray)
-                
-                // Input Text Editor
-                VStack(alignment: .leading) {
-                    Text("Enter the text to analyze:")
-                        .font(.headline)
-                        .padding(.bottom, 5)
-                    
-                    TextEditor(text: $input)
-                        .font(.body)
-                        .frame(height: 150)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10) // added rounded blue rectangle text input field to give the view a minimalistic and clean look
-                                .stroke(Color.blue, lineWidth: 2)
-                        )
-                        .onChange(of: input) { oldValue, newValue in
-                            if newValue.last == " " {
-                                self.phishingIdentifier.predict(newValue)
-                            }
-                        }
-                    
-                    // Back Button
+                HStack {
                     Button(action: {
-                        currentScreen = previousScreen  // Use the previousScreen value, added by Diego for navigation
+                        currentScreen = .home // navigation
                     }) {
                         HStack {
-                            Image(systemName: "arrow.left") // button for returning to PhishGuard's home screen
+                            Image(systemName: "arrow.left") // button in UI to return to PhishGuard's main menu
                             Text("Back")
                         }
-                        .padding()
-                        .foregroundColor(.blue)
+                        .padding(.leading)
+                        Spacer()
                     }
                 }
-                .padding(.horizontal)
+                .zIndex(1)
                 
-                Spacer()
+                ScrollView {
+                    VStack(spacing: 20) {
+                        
+                        Text("Phishing Text Detector")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .padding(.top)
+                        
+                        Text("""
+                        Use the Phishing Text Detector to check suspicious text for phishing attempts. 
+                        Enter or paste the text, and the app will analyze it for potential risks.
+                        """) // Description of the tool
+                        .padding()
+                        .foregroundColor(.gray)
+                        
+                        Spacer()
+                        
+                        // Prediction Result
+                        Text(self.phishingIdentifier.prediction == "spam" ? "PHISHING DETECTED" : "No Phishing Detected") // Phishing vs no phishing detection to be read by the user
+                            .font(.system(size: 30))
+                            .fontWeight(.bold)
+                            .padding()
+                            .multilineTextAlignment(.center)
+                        
+                        // Confidence Level
+                        Text("Confidence: \(String(format: "%.2f", self.phishingIdentifier.confidence * 100))%") // Converted decimal to percentage
+                            .font(.title2)
+                            .foregroundColor(.gray)
+                        
+                        // Input Text Editor
+                        VStack(alignment: .leading) {
+                            Text("Enter the text to analyze:")
+                                .font(.headline)
+                                .padding(.bottom, 5)
+                            
+                            TextEditor(text: $input)
+                                .font(.body)
+                                .frame(height: 150)
+                                .padding()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10) // Added rounded blue rectangle text input field
+                                        .stroke(Color.blue, lineWidth: 2)
+                                )
+                                .onChange(of: input) { oldValue, newValue in
+                                    if newValue.last == " " {
+                                        self.phishingIdentifier.predict(newValue)
+                                    }
+                                }
+                        }
+                        .padding(.horizontal)
+                        
+                        Spacer()
+                    }
+                    .padding()
+                    .navigationTitle("Text Detector")
+                }
             }
-            .padding()
-            .navigationTitle("Text Detector")
         }
     }
 }

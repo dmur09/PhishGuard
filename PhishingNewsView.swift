@@ -1,8 +1,3 @@
-//
-//  PhishingNewsView.swift
-//  PhishGuard
-//
-//  Created by Ewan Shen on 12/7/24.
 // Ewan implemented the Phishing News tool that will provide a list of top news stories regarding phishing
 // Up-to-date news on threats and trends keep users informed
 // Implements NewsAPI to fetch news stories
@@ -38,55 +33,59 @@ struct PhishingNewsView: View {
     @Binding var currentScreen: Screen
     @Binding var previousScreen: Screen  // Diego added these two new bindings to interconnect PhishGuard home screen to the Phishing News screen
 
-    // Phishing News view, 
+    // Phishing News view,
     var body: some View {
-        VStack {
-            Text("Phishing News") // title of the tool
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding()
-            
-            Text("""
-                Stay updated with the latest news on phishing attempts and how to protect yourself.
-                This section will highlight important news related to phishing threats.
-                """) // description of the tool
-                .multilineTextAlignment(.center)
-                .padding()
-                .foregroundColor(.gray)
-            
-            if isLoading {
-                ProgressView("Loading News...") // Progress View to express action in progress (source: Apple Developer Documentation)
-                    .padding()
-            }
-            else { // once done loading
-                List(newsArticles.prefix(10), id: \.id) { article in // list the top 10 articles
-                    VStack(alignment: .leading, spacing: 5) { // stack and display title and description
-                        Text(article.title) // title
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                            .onTapGesture { // when tapped, the article URL is loaded
-                                if let url = URL(string: article.url) { // check if valid URL
-                                    UIApplication.shared.open(url) // opens URL in system's web browsers
-                                }
-                            }
-                        Text(article.description) // description
-                            .font(.body)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.vertical, 5)
-                }
-                .listStyle(InsetGroupedListStyle())
-            }
+        VStack { // Correctly wraps all elements in a single VStack to avoid overlay issues
             // Back Button
-            Button(action: {
-                        currentScreen = previousScreen  // Added by Diego, implements navigation through a back button
-            }) {
-                HStack {
-                    Image(systemName: "arrow.left") // actual button in UI
-                    Text("Back")
+            HStack {
+                Button(action: {
+                    currentScreen = previousScreen // navigation
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.left") // button in UI to return to PhishGuard's main menu
+                        Text("Back")
+                    }
                 }
-                .padding()
-                .foregroundColor(.blue)
+                Spacer() // Ensures Back button stays to the left
+            }
+            .padding()
+            
+            VStack {
+                Text("Phishing News")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding()
+
+                Text("""
+                    Stay updated with the latest news on phishing attempts and how to protect yourself.
+                    This section will highlight important news related to phishing threats.
+                    """) // description of the tool
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .foregroundColor(.gray)
+
+                if isLoading {
+                    ProgressView("Loading News...") // Progress View to express action in progress (source: Apple Developer Documentation)
+                        .padding()
+                } else { // once done loading
+                    List(newsArticles.prefix(10), id: \ .id) { article in // list the top 10 articles
+                        VStack(alignment: .leading, spacing: 5) { // stack and display title and description
+                            Text(article.title) // title
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                                .onTapGesture { // when tapped, the article URL is loaded
+                                    if let url = URL(string: article.url) { // check if valid URL
+                                        UIApplication.shared.open(url) // opens URL in system's web browsers
+                                    }
+                                }
+                            Text(article.description) // description
+                                .font(.body)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.vertical, 5)
+                    }
+                    .listStyle(InsetGroupedListStyle())
+                }
             }
         }
         .onAppear(perform: fetchNews) // call the fetchNews function to initiate bringing information from News API
@@ -132,3 +131,4 @@ struct PhishingNewsView: View {
         }.resume()
     }
 }
+
